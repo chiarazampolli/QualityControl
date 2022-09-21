@@ -82,7 +82,7 @@
 	"remotePort": "47761",
 	"localControl": "odc"
       }
-    },
+    }
   },
   "dataSamplingPolicies" : [
     {
