@@ -346,7 +346,7 @@ void CellTask::monitorData(o2::framework::ProcessingContext& ctx)
           auto timeoffset = mTimeCalib ? mTimeCalib->getTimeCalibParam(cell.getTower(), cell.getLowGain()) : 0.;
           bool goodcell = true;
           if (mBadChannelMap) {
-            goodcell = mBadChannelMap->getChannelStatus(cell.getTower()) != MaskType_t::GOOD_CELL;
+            goodcell = mBadChannelMap->getChannelStatus(cell.getTower()) == MaskType_t::GOOD_CELL;
           }
           histos.fillHistograms(cell, goodcell, timeoffset, bcphase);
           if (isPhysTrigger) {
@@ -583,11 +583,6 @@ void CellTask::CellHistograms::initForTrigger(const std::string trigger, const T
       }
     }
 
-    mCellAmpSupermodule = histBuilder2D("cellAmplitudeSupermodule", "Cell amplitude vs. supermodule ID ", 4 * static_cast<int>(maxAmp), 0., maxAmp, 20, -0.5, 19.5, false);
-    mCellAmpSupermodule->SetStats(0);
-    mCellTimeSupermodule = histBuilder2D("cellTimeSupermodule", "Cell Time vs. supermodule ID ", 600, -400, 800, 20, -0.5, 19.5, false);
-    mCellTimeSupermodule->SetStats(0);
-
     if (settings.mHasHistosCalib2D) {
       mCellAmpSupermoduleCalib = histBuilder2D("cellAmplitudeSupermoduleCalib", "Cell amplitude (Calib) vs. supermodule ID ", 4 * static_cast<int>(maxAmp), 0., maxAmp, 20, -0.5, 19.5, false);
       mCellAmpSupermoduleCalib->SetStats(0);
@@ -601,6 +596,10 @@ void CellTask::CellHistograms::initForTrigger(const std::string trigger, const T
       mCellOccupancyBad->SetStats(0);
     }
   }
+  mCellAmpSupermodule = histBuilder2D("cellAmplitudeSupermodule", "Cell amplitude vs. supermodule ID ", 4 * static_cast<int>(maxAmp), 0., maxAmp, 20, -0.5, 19.5, false);
+  mCellAmpSupermodule->SetStats(0);
+  mCellTimeSupermodule = histBuilder2D("cellTimeSupermodule", "Cell Time vs. supermodule ID ", 600, -400, 800, 20, -0.5, 19.5, false);
+  mCellTimeSupermodule->SetStats(0);
 
   mCellOccupancy = histBuilder2D("cellOccupancyEMC", "Cell Occupancy EMCAL", 96, -0.5, 95.5, 208, -0.5, 207.5, false);
   mCellOccupancy->SetStats(0);
@@ -626,7 +625,7 @@ void CellTask::CellHistograms::initForTrigger(const std::string trigger, const T
   mCellAmplitudeEMCAL = histBuilder1D("cellAmplitudeEMCAL", "Cell amplitude in EMCAL", 4 * static_cast<int>(maxAmp), 0., maxAmp);
   mCellAmplitudeDCAL = histBuilder1D("cellAmplitudeDCAL", "Cell amplitude in DCAL", 4 * static_cast<int>(maxAmp), 0., maxAmp);
   mnumberEvents = histBuilder1D("NumberOfEvents", "Number Of Events", 1, 0.5, 1.5);
-
+  //
   std::fill(mCellTimeBC.begin(), mCellTimeBC.end(), nullptr);
   if (isPhysTrigger) {
     // Phys. trigger: monitor all bunch crossings
@@ -829,7 +828,7 @@ void CellTask::CellHistograms::reset()
   }
 
   for (auto histos : mCellTimeBC) {
-    //for (auto hist : histos)
+    // for (auto hist : histos)
     resetOptional(histos);
   }
   //  resetOptional(mEvCounterTF);
@@ -888,7 +887,7 @@ void CellTask::CellHistograms::clean()
     cleanOptional(histos);
   }
   for (auto histos : mCellTimeBC) {
-    //for (auto hist : histos)
+    // for (auto hist : histos)
     cleanOptional(histos);
   }
   //  cleanOptional(mEvCounterTF);

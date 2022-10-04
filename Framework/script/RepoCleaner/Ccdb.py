@@ -19,7 +19,7 @@ class ObjectVersion:
     This class represents a single version. 
     '''
 
-    def __init__(self, path, validFrom, validTo, uuid=None, metadata=None):
+    def __init__(self, path: str, validFrom, validTo, uuid=None, metadata=None):
         '''
         Construct an ObjectVersion.
         :param path: path to the object
@@ -80,21 +80,25 @@ class Ccdb:
             paths.append(item['path'])
         return paths
 
-    def getVersionsList(self, object_path: str, from_ts: str = "", to_ts: str = "") -> List[ObjectVersion]:
+    def getVersionsList(self, object_path: str, from_ts: str = "", to_ts: str = "", run: int = -1) \
+            -> List[ObjectVersion]:
         '''
         Get the list of all versions for a given object.
+        :param run: only objects for this run (based on metadata)
         :param object_path: Path to the object for which we want the list of versions.
         :param from_ts: only objects created at or after this timestamp
         :param to_ts: only objects created before or at this timestamp
         :return A list of ObjectVersion.
         '''
         url_browse_all_versions = self.url + '/browse/' + object_path
-        logger.debug(f"Ccdb::getVersionsList -> {url_browse_all_versions}")
         headers = {'Accept': 'application/json', 'Connection': 'close'}
         if from_ts != "":
             headers["If-Not-Before"] = from_ts
         if to_ts != "":
             headers["If-Not-After"] = to_ts
+        if run != -1:
+            url_browse_all_versions += '/RunNumber=' + run
+        logger.debug(f"Ccdb::getVersionsList -> {url_browse_all_versions}")
         logger.debug(f"{headers}")
         r = requests.get(url_browse_all_versions, headers=headers)
         r.raise_for_status()
@@ -124,7 +128,24 @@ class Ccdb:
             r.raise_for_status()
             self.counter_deleted += 1
         except requests.exceptions.RequestException as e:
-            logging.error(f"Exception in process_object: {traceback.format_exc()}")
+            logging.error(f"Exception in deleteVersion: {traceback.format_exc()}")
+
+    @dryable.Dryable()
+    def moveVersion(self, version: ObjectVersion, to_path: str):
+        '''
+        Move the version to a different path.
+        :param version: The version of the object to move, as an instance of ObjectVersion.
+        :param to_path: The destination path
+        '''
+        url_move = self.url + '/' + version.path + '/' + str(version.validFrom) + '/' + version.uuid
+        logger.debug(f"Move version at url {url_move} to {to_path}")
+        headers = {'Connection': 'close', 'Destination': to_path}
+        try:
+            r = requests.request("MOVE", url_move, headers=headers)
+            r.raise_for_status()
+            self.counter_deleted += 1
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Exception in moveVersion: {traceback.format_exc()}")
 
     @dryable.Dryable()
     def updateValidity(self, version: ObjectVersion, valid_from: int, valid_to: int, metadata=None):
