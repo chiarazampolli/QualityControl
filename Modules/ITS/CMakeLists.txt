@@ -1,13 +1,16 @@
-﻿# ---- Library ----
+﻿
+# ---- Library ----
 
 add_library(O2QcITS
             src/ITSRawTask.cxx
             src/TrendingTaskITSThr.cxx
             src/TrendingTaskITSFhr.cxx
+	    src/TrendingTaskITSFEE.cxx
             src/TrendingTaskITSCluster.cxx
             src/TrendingTaskITSTracks.cxx
             src/TrendingTaskConfigITS.cxx
             src/TH2XlineReductor.cxx
+	    src/ReductorBinContent.cxx
             src/ITSFhrTask.cxx
             src/ITSFeeTask.cxx
             src/ITSClusterTask.cxx
@@ -20,9 +23,12 @@ add_library(O2QcITS
             src/ITSFeeCheck.cxx
 	    src/ITSTrackSimTask.cxx 
             src/ITSThresholdCalibrationCheck.cxx 
+            src/ITSDecodingErrorTask.cxx 
             )
 
-target_sources(O2QcITS PRIVATE src/TH2XlineReductor.cxx)
+target_sources(O2QcITS PRIVATE
+               src/TH2XlineReductor.cxx
+               src/ReductorBinContent.cxx)
 
 target_include_directories(
   O2QcITS
@@ -53,9 +59,11 @@ add_root_dictionary(O2QcITS
                     HEADERS include/ITS/ITSRawTask.h
                             include/ITS/TrendingTaskITSThr.h
                             include/ITS/TrendingTaskITSFhr.h
+			    include/ITS/TrendingTaskITSFEE.h
                             include/ITS/TrendingTaskITSCluster.h
                             include/ITS/TrendingTaskITSTracks.h
                             include/ITS/TH2XlineReductor.h
+			    include/ITS/ReductorBinContent.h
                             include/ITS/ITSFhrTask.h
                             include/ITS/ITSFeeTask.h
                             include/ITS/ITSClusterTask.h
@@ -68,6 +76,7 @@ add_root_dictionary(O2QcITS
                             include/ITS/ITSFeeCheck.h
 			    include/ITS/ITSTrackSimTask.h 
                             include/ITS/ITSThresholdCalibrationCheck.h 
+                            include/ITS/ITSDecodingErrorTask.h 
                     LINKDEF include/ITS/LinkDef.h
                     BASENAME O2QcITS)
 
@@ -119,6 +128,7 @@ install(FILES
         its.json
         itsQCTrendingThr.json
         itsQCTrendingFhr.json
+	itsQCTrendingFEE.json
         itsQCTrendingCluster.json
         itsQCTrendingTracks.json
         itsFhr.json

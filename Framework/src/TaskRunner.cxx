@@ -117,11 +117,9 @@ void TaskRunner::initInfologger(InitContext& iCtx)
     ILOG(Error, Devel) << "Could not find the DPL InfoLogger" << ENDM;
   }
 
-  mTaskConfig.infologgerDiscardFile = templateILDiscardFile(mTaskConfig.infologgerDiscardFile, iCtx);
+  mTaskConfig.infologgerDiscardParameters.discardFile = templateILDiscardFile(mTaskConfig.infologgerDiscardParameters.discardFile, iCtx);
   QcInfoLogger::init("task/" + mTaskConfig.taskName,
-                     mTaskConfig.infologgerFilterDiscardDebug,
-                     mTaskConfig.infologgerDiscardLevel,
-                     mTaskConfig.infologgerDiscardFile,
+                     mTaskConfig.infologgerDiscardParameters,
                      il,
                      ilContext);
   QcInfoLogger::setDetector(mTaskConfig.detectorName);
@@ -304,7 +302,7 @@ void TaskRunner::endOfStream(framework::EndOfStreamContext& eosContext)
   mNoMoreCycles = true;
 }
 
-void TaskRunner::start(const ServiceRegistry& services)
+void TaskRunner::start(ServiceRegistryRef services)
 {
   mRunNumber = o2::quality_control::core::computeRunNumber(services, mTaskConfig.fallbackActivity.mId);
   QcInfoLogger::setRun(mRunNumber);

@@ -488,11 +488,9 @@ void CheckRunner::initInfologger(framework::InitContext& iCtx)
     ILOG(Error) << "Could not find the DPL InfoLogger." << ENDM;
   }
 
-  mConfig.infologgerDiscardFile = templateILDiscardFile(mConfig.infologgerDiscardFile, iCtx);
+  mConfig.infologgerDiscardParameters.discardFile = templateILDiscardFile(mConfig.infologgerDiscardParameters.discardFile, iCtx);
   QcInfoLogger::init(createCheckRunnerFacility(mDeviceName),
-                     mConfig.infologgerFilterDiscardDebug,
-                     mConfig.infologgerDiscardLevel,
-                     mConfig.infologgerDiscardFile,
+                     mConfig.infologgerDiscardParameters,
                      il,
                      ilContext);
 }
@@ -509,7 +507,7 @@ void CheckRunner::initLibraries()
   }
 }
 
-void CheckRunner::start(const ServiceRegistry& services)
+void CheckRunner::start(ServiceRegistryRef services)
 {
   mActivity = computeActivity(services, mConfig.fallbackActivity);
   string partitionName = computePartitionName(services);

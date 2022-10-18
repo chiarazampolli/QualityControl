@@ -935,7 +935,10 @@ should not be present in real configuration files.
         "filterDiscardDebug": "false",    "": "Set to 1 to discard debug and trace messages (default: false)",
         "filterDiscardLevel": "2",        "": "Message at this level or above are discarded (default: 21 - Trace)",
         "filterDiscardFile": "",          "": ["If set, the discarded messages will go to this file (default: <none>)",
-                                              "The keyword _ID_, if used, is replaced by the device ID."]
+                                              "The keyword _ID_, if used, is replaced by the device ID.",
+                                              "Discarded Debug messages don't go there."],
+        "filterRotateMaxBytes": "",       "": "Maximum size of the discard file.", 
+        "filterRotateMaxFiles": "",       "": "Maximum number of discard files."
       },
       "postprocessing": {                 "": "Configuration parameters for post-processing",
         "periodSeconds": 10.0,            "": "Sets the interval of checking all the triggers. One can put a very small value",
@@ -1145,6 +1148,12 @@ The behaviour of the check can be inverted by setting the customparameter "mustI
           "mustIncrease": "false"
         }
 ```
+
+## Update the shmem segment size of a detector
+
+In consul go to `o2/runtime/aliecs/defaults` and modify the file corresponding to the detector: [det]_qc_shm_segment_size
+
+
 
 
 ---

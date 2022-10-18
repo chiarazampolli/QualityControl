@@ -310,11 +310,9 @@ void AggregatorRunner::initInfoLogger(InitContext& iCtx)
     ILOG(Error) << "Could not find the DPL InfoLogger." << ENDM;
   }
 
-  mRunnerConfig.infologgerDiscardFile = templateILDiscardFile(mRunnerConfig.infologgerDiscardFile, iCtx);
+  mRunnerConfig.infologgerDiscardParameters.discardFile = templateILDiscardFile(mRunnerConfig.infologgerDiscardParameters.discardFile, iCtx);
   QcInfoLogger::init("aggregator",
-                     mRunnerConfig.infologgerFilterDiscardDebug,
-                     mRunnerConfig.infologgerDiscardLevel,
-                     mRunnerConfig.infologgerDiscardFile,
+                     mRunnerConfig.infologgerDiscardParameters,
                      il,
                      ilContext);
 }
@@ -405,7 +403,7 @@ void AggregatorRunner::sendPeriodicMonitoring()
   }
 }
 
-void AggregatorRunner::start(const ServiceRegistry& services)
+void AggregatorRunner::start(ServiceRegistryRef services)
 {
   mActivity = computeActivity(services, mRunnerConfig.fallbackActivity);
   mTimerTotalDurationActivity.reset();
